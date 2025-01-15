@@ -20,6 +20,7 @@ const ChatInterface = () => {
       try {
         const response = await fetch('https://asksherlock.azurewebsites.net/get_user', {
           method: 'GET',
+          
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
