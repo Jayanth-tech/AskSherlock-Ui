@@ -18,7 +18,7 @@ const ChatInterface = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('https://asksherlock.azurewebsites.net/get_user', {
+        const response = await fetch('https://asksherlock-function.azurewebsites.net/api/LLMIntroduction?', {
           method: 'GET',
           
           headers: {
