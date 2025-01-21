@@ -87,7 +87,8 @@ const ChatInterface = () => {
         .map((msg) => msg.content)
         .join("\n");
   
-      const response = await fetch('https://asksherlock.azurewebsites.net/chat', {
+    //  const response = await fetch('https://asksherlock.azurewebsites.net/chat', {
+        const response = await fetch('https://asksherlock-function.azurewebsites.net/api/AskSherlockFunction?', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
