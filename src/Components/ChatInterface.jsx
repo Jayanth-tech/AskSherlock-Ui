@@ -111,6 +111,8 @@ const ChatInterface = () => {
   
       const botMessage = {
         id: Date.now() + 1,
+
+        
         content: data.ai || data.response || "I couldn't process that request.",
         sender: "bot",
         feedback: null,
