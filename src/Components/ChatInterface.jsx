@@ -18,7 +18,7 @@ const ChatInterface = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('https://teams.microsoft.com/l/message/19:7cccfb37-bf98-4ac7-88ea-b0646307e628_bbe6557d-2dda-4940-b7ea-3bf1551d968e@unq.gbl.spaces/1737449790517?context=%7B%22contextType%22%3A%22chat%22%7D', {
+        const response = await fetch('https://asksherlock-function.azurewebsites.net/api/LLMIntroduction?', {
           method: 'GET',
           
           headers: {
@@ -87,7 +87,8 @@ const ChatInterface = () => {
         .map((msg) => msg.content)
         .join("\n");
   
-      const response = await fetch('https://asksherlock-function.azurewebsites.net/api/AskSherlockFunction?', {
+    //  const response = await fetch('https://asksherlock.azurewebsites.net/chat', {
+        const response = await fetch('https://asksherlock-function.azurewebsites.net/api/AskSherlockFunction?', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
