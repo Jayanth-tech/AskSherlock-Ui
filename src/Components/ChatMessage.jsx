@@ -18,7 +18,7 @@ const parseTextWithPatterns = (text) => {
         return docReferences.map((docRef, docIndex) => (
           <span
             key={`${index}-${docIndex}`}
-            className="text-blue-600 hover:underline break-words cursor-pointer"
+            className="text-gray-400 break-words"
           >
             {docRef}
           </span>
