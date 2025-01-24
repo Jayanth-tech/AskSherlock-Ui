@@ -1,11 +1,10 @@
 {
-  "routes": [
-    {
-      "route": "/*",
-      "redirect": "/"
-    }
-  ],
   "navigationFallback": {
-    "rewrite": "/index.html"
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "/static/*"]
+  },
+  "mimeTypes": {
+    ".js": "application/javascript",
+    ".css": "text/css"
   }
 }
