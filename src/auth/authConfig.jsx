@@ -14,7 +14,8 @@ export const msalConfig = {
     auth: {
         clientId: "1002933a-5fa9-48da-be38-be47b1ff62d7",
         authority: "https://login.microsoftonline.com/21212548-dd86-4f27-a1fa-faf16eedb7c3",
-        redirectUri: "https://zealous-coast-00016ed10.4.azurestaticapps.net"
+        redirectUri: "http://localhost:5000/"
+        // redirectUri: "https://zealous-coast-00016ed10.4.azurestaticapps.net"
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored

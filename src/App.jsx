@@ -7,38 +7,54 @@ import { useMsal, useMsalAuthentication } from '@azure/msal-react';
 import { InteractionType } from '@azure/msal-browser';
 
 const App = () => {
-  // Trigger MSAL authentication with redirect method
   const { instance, accounts } = useMsal();
   const { login, result, error, inProgress } = useMsalAuthentication(InteractionType.Redirect);
 
-  // State for storing logged-in user info
-  const [m_strUser, setm_steUser] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhoto, setUserPhoto] = useState("");
 
-  // If authentication is still in progress, don't render the app yet
   if (inProgress === 'login') {
     return <div>Logging in...</div>;
   }
 
-  // Set the user information once login is completed
   useEffect(() => {
     if (accounts.length > 0) {
-      const username = accounts[0]?.username || '';  // Safely access username
-      setm_steUser(username);
+      const email = accounts[0]?.username || '';
+      // Format email to display name (e.g., "JayanthB3@quinnox.com" → "Jayanth B")
+      const formattedName = email
+        .split('@')[0]
+        .replace(/[0-9]/g, '')
+        .replace(/([A-Z])/g, ' $1')
+        .trim();
+      
+      setUserName(formattedName || "Guest User");
+      setUserEmail(email);
+
+      const userProfile = accounts[0]?.idTokenClaims || {};
+      const photoUrl = userProfile?.picture || '';
+      setUserPhoto(photoUrl);
     }
   }, [accounts]);
 
-  // Conditional render based on user information
-  if (m_strUser === "") {
+  const handleLogout = () => {
+    instance.logoutRedirect({
+      postLogoutRedirectUri: "/",
+    });
+  };
+
+  if (userName === "") {
     return (
-      <div>
-        Please wait...
-        {/* Call login if the user is not logged in */}
-        {!m_strUser && !error && (
+      <div className='flex justify-center items-center mt-[40vh] flex-col'>
+        <div className='text-center'>Please wait<br/> We are authenticating you</div>
+        <div>
+          <span className="loading loading-bars loading-lg "></span>
+        </div>
+        {!userName && !error && (
           <button onClick={() => login()}>
-            Log in
           </button>
         )}
-        {error && <div>{error.message}</div>} 
+        {error && <div>{error.message}</div>}
       </div>
     );
   }
@@ -47,7 +63,17 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<MagnifierScreen />} />
-        <Route path="/chat" element={<ChatInterface />} />
+        <Route
+          path="/chat"
+          element={
+            <ChatInterface 
+              userName={userName} 
+              userEmail={userEmail}
+              photo={userPhoto}
+              onLogout={handleLogout}
+            />
+          }
+        />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

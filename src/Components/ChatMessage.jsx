@@ -6,38 +6,39 @@ import { User, ThumbsUp, ThumbsDown } from 'lucide-react';
 const parseTextWithPatterns = (text) => {
   if (typeof text !== 'string') return text;
 
-  const parts = text.split(/(\[doc\d+\](?:\[doc\d+\])*)/g);
+  // Split the text to handle document references and URLs separately
+  const parts = text.split(/(\[doc\d+\]\(https?:\/\/[^\s)]+\)|\*\*.*?\*\*|\[doc\d+\](?:\[doc\d+\])*)/g);
 
   return parts
     .map((part, index) => {
       if (!part) return null;
 
-      // Handle document references (e.g., [doc1][doc2][doc3])
+      // Handle document references with URLs (e.g., [doc1](url))
+      if (part.match(/^\[doc\d+\]\(https?:\/\/[^\s)]+\)$/)) {
+        const docLink = part.match(/\[(doc\d+)\]\((https?:\/\/[^\s)]+)\)/);
+        return (
+          <a
+            key={`${index}`}
+            href={docLink[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline break-words"
+          >
+            {docLink[1]}
+          </a>
+        );
+      }
+
+      // Handle multiple document references without URLs
       if (part.match(/^\[doc\d+\](?:\[doc\d+\])*$/)) {
         const docReferences = part.match(/\[doc\d+\]/g); // Match each [docX] individually
         return docReferences.map((docRef, docIndex) => (
           <span
             key={`${index}-${docIndex}`}
-            className="text-gray-400 "
+            className="text-gray-400"
           >
             {docRef}
           </span>
-        ));
-      }
-
-      // Handle document references with URLs (e.g., [doc1](url))
-      if (part.match(/\[doc\d+\]\(https?:\/\/[^\s)]+\)/g)) {
-        const docLinks = [...part.matchAll(/\[doc\d+\]\((https?:\/\/[^\s)]+)\)/g)];
-        return docLinks.map((docLink, linkIndex) => (
-          <a
-            key={`${index}-${linkIndex}`}
-            href={docLink[1]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline break-words"
-          >
-            {docLink[0]}
-          </a>
         ));
       }
 
@@ -137,9 +138,10 @@ const parseTextWithPatterns = (text) => {
 
       return subParts.length > 0 ? subParts : [part];
     })
-    .flat() 
+    .flat()
     .filter(Boolean);
 };
+
 
 
 
@@ -233,6 +235,7 @@ const formatMessage = (content) => {
 
     return (
       <div className="space-y-4 min-w-0">
+
         {introText && <div className="whitespace-pre-wrap break-words">{parseTextWithPatterns(introText)}</div>}
         <div className="space-y-2 min-w-0">
           {structuredContent.map((item, index) => (

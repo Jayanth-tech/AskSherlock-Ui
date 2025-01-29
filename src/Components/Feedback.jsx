@@ -27,11 +27,12 @@ const Feedback = ({ isOpen, onClose, type, onSubmit }) => {
           </button>
         </div>
         <textarea
-          value={feedbackText}
-          onChange={(e) => setFeedbackText(e.target.value)}
-          placeholder="Please provide additional feedback (optional)"
-          className="w-full p-3 border rounded-lg mb-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+  value={feedbackText}
+  onChange={(e) => setFeedbackText(e.target.value)}
+  placeholder="Please provide additional feedback (optional)"
+  className="w-full p-3 border rounded-lg mb-4 h-32 resize-none focus:outline-none bg-gray-200 focus:ring-2 focus:ring-blue-500"
+/>
+
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}

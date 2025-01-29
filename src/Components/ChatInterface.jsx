@@ -1,36 +1,39 @@
-// ChatInterface.jsx
 import React, { useState, useEffect } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import Sidebar from './Sidebar';
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import { X } from 'lucide-react';
 
-const ChatInterface = () => {
+const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isIntroLoading, setIsIntroLoading] = useState(true); // New state for intro loading
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [feedbackModal, setFeedbackModal] = useState({ isOpen: false, messageId: null, type: null });
   const [feedbackText, setFeedbackText] = useState("");
-  const [username, setUsername] = useState("User Name"); // Default username
-  const [introMessage, setIntroMessage] = useState(""); // For welcome message
+  const [introMessage, setIntroMessage] = useState("");
+  const [username, setUsername] = useState(userName || "Guest User");
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setIsIntroLoading(true); // Start loading
       try {
         const response = await fetch('https://asksherlock.azurewebsites.net/get_user', {
-          method: 'GET',
-          
+          method: 'POST',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
           mode: 'cors',
-          credentials: 'omit'
+          credentials: 'omit',
+          body: JSON.stringify({ username: userName })
         });
 
         const data = await response.json();
-        setUsername(data.user || "Guest User");
+        setUsername(userName || "Guest User");
         setIntroMessage(data.intro_message || "Welcome to Ask Sherlock!");
         setMessages([
           {
@@ -39,15 +42,10 @@ const ChatInterface = () => {
             sender: "bot",
             feedback: null,
           },
-          
         ]);
-        console.dir(data)
-
       } catch (error) {
-        // console.error("Error fetching user data:", error);
         console.log("Error fetching user data");
-        
-        setUsername("Guest User");
+        setUsername(userName || "Guest User");
         setIntroMessage("Welcome to Ask Sherlock!");
         setMessages([
           {
@@ -57,79 +55,113 @@ const ChatInterface = () => {
             feedback: null,
           },
         ]);
+      } finally {
+        setIsIntroLoading(false); // End loading
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [userName]);
 
+
+
+  
   const handleSubmit = async (e, inputMessage) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
+  
+    // Get current timestamp in required format
+    const getCurrentTimestamp = () => {
+      const date = new Date();
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(',', '');
+    };
+  
+    // Store last conversation in session storage
+    const storeLastConversation = (userMsg, aiMsg) => {
+      const lastConversation = {
+        user: userMsg,
+        ai: aiMsg,
+        timestamp: getCurrentTimestamp()
+      };
+      sessionStorage.setItem('lastConversation', JSON.stringify(lastConversation));
+    };
   
     const userMessage = {
       id: Date.now(),
       content: inputMessage,
       sender: "user",
       feedback: null,
+      timestamp: getCurrentTimestamp()
     };
-    setMessages((prev) => [...prev, userMessage]);
   
+    setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
   
     try {
-      const userHistory = messages
-        .filter((msg) => msg.sender === "user")
-        .map((msg) => msg.content)
-        .join("\n");
-      const aiHistory = messages
-        .filter((msg) => msg.sender === "bot")
-        .map((msg) => msg.content)
-        .join("\n");
+      // Get only the last user message and bot response for history
+      const lastUserMessage = messages
+        .filter(msg => msg.sender === "user")
+        .slice(-1)[0]?.content || "";
+      
+      const lastBotMessage = messages
+        .filter(msg => msg.sender === "bot")
+        .slice(-1)[0]?.content || "";
   
-    //  const response = await fetch('https://https://asksherlock.azurewebsites.net/chat', {
-        const response = await fetch('https://asksherlock.azurewebsites.net/chat', {
+      const response = await fetch('https://asksherlock.azurewebsites.net/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           history: {
-            user: userHistory || "", // Send empty string if no user messages
-            ai: aiHistory || "",    // Send empty string if no AI messages
+            user: lastUserMessage,
+            ai: lastBotMessage
           },
           query: inputMessage,
+          created: getCurrentTimestamp(),
+          username: userName 
         }),
       });
-  
-      // if (!response.ok) {
-      //   console.error(`Server error: ${response.status}`);
-      //   throw new Error(`Server returned status: ${response.status}`);
-      // }
   
       const data = await response.json();
   
       const botMessage = {
         id: Date.now() + 1,
-
-        
         content: data.ai || data.response || "I couldn't process that request.",
         sender: "bot",
         feedback: null,
+        timestamp: getCurrentTimestamp()
       };
+  
       setMessages((prev) => [...prev, botMessage]);
+  
+      // Store the last conversation after successful response
+      storeLastConversation(inputMessage, botMessage.content);
+  
     } catch (error) {
       console.error("Error submitting chat input:", error);
+      
+      const errorMessage = {
+        id: Date.now() + 1,
+        content: "Sorry, I encountered an error. Please try again.",
+        sender: "bot",
+        feedback: null,
+        timestamp: getCurrentTimestamp()
+      };
   
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          content: "Sorry, I encountered an error. Please try again.",
-          sender: "bot",
-          feedback: null,
-        },
-      ]);
+      setMessages((prev) => [...prev, errorMessage]);
+      
+      // Store the error conversation
+      storeLastConversation(inputMessage, errorMessage.content);
+  
     } finally {
       setIsLoading(false);
     }
@@ -147,7 +179,7 @@ const ChatInterface = () => {
     };
 
     try {
-      await fetch('https://https://asksherlock.azurewebsites.net/feedback', {
+      await fetch('https://asksherlock.azurewebsites.net/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,6 +195,7 @@ const ChatInterface = () => {
     }
   };
 
+
   return (
     <div className="h-screen flex relative bg-gray-50">
       <Sidebar
@@ -174,13 +207,39 @@ const ChatInterface = () => {
       <div className="flex-1 flex flex-col">
         <ChatHeader
           onOpenSidebar={() => setIsSidebarOpen(true)}
-          username={username}
+          userName={userName}
+          userEmail={userEmail}
+          photo={photo}
+          onLogout={onLogout}
         />
-{/* 
+
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 bg-gradient-to-r from-gray-100 to-gray-200 p-2">
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
+          {isIntroLoading ? (
+            <div className="flex w-full max-w-4xl mx-auto px-4">
+              <div className="flex items-start gap-4 w-full justify-start">
+                <div className="flex items-start gap-4 max-w-[85%] md:max-w-[75%] min-w-0 flex-row">
+                  <div className="flex-shrink-0">
+                    <Skeleton circle width={32} height={32}   baseColor="#d1d5db" />
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <Skeleton height={50} width={600}   baseColor="#d1d5db"  />
+                    <Skeleton count={5}   baseColor="#d1d5db" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            messages.map((message, index) => (
+              <ChatMessage 
+                key={message.id} 
+                message={message} 
+                onFeedback={(messageId, type) =>
+                  setFeedbackModal({ isOpen: true, messageId, type })
+                }
+                isLastMessage={index === messages.length - 1}
+              />
+            ))
+          )}
 
           {isLoading && (
             <ChatMessage
@@ -191,30 +250,7 @@ const ChatInterface = () => {
               }}
             />
           )}
-        </div> */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 bg-gradient-to-r from-gray-100 to-gray-200 p-2">
-  {messages.map((message ,index) => (
-    <ChatMessage 
-      key={message.id} 
-      message={message} 
-      onFeedback={(messageId, type) =>
-        setFeedbackModal({ isOpen: true, messageId, type })
-      }
-      isLastMessage={index === messages.length - 1}
-    />
-  ))}
-
-  {isLoading && (
-    <ChatMessage
-      message={{
-        id: 'loading',
-        content: "Thinking...",
-        sender: "bot",
-      }}
-    />
-  )}
-</div>
-
+        </div>
 
         <div className="border-t bg-gradient-to-r from-gray-300 to-gray-300 p-2">
           <div className="max-w-4xl mx-auto">
