@@ -127,7 +127,8 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
           },
           query: inputMessage,
           created: getCurrentTimestamp(),
-          username: userName 
+          username: userName  ,
+          emailId: userEmail 
         }),
       });
   
