@@ -4,7 +4,7 @@ import Robot from "../assets/robot2.png";
 
 const ChatHeader = ({ userName, userEmail, photo, onOpenSidebar, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
-
+  const [isHovered, setIsHovered] = useState(false);
   const handleUserClick = () => {
     setShowUserMenu(!showUserMenu);
   };
@@ -23,19 +23,46 @@ const ChatHeader = ({ userName, userEmail, photo, onOpenSidebar, onLogout }) => 
 
         <img src={Robot} alt="Bot" className="w-5 h-5 md:w-6 md:h-6 lg:w-10 lg:h-10 rounded-2xl sm:w-6 sm:h-6" />
 
-        <div className="flex flex-col">
-          <h1 className="text-lg md:text-xl agbalumo-regular font-black text-purple-800">
-            Ask Sherlock
-          </h1>
-          <span className="text-xs sm:text-xs text-orange-500 font-medium">
-            Powered by Gen AI
-          </span>
+        <div className="flex flex-col relative">
+        <h1 
+          className="text-lg md:text-xl noto-serif-old-uyghur-regular font-black text-purple-800 cursor-pointer"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          Ask Sherlock
+        </h1>
+
+        <span className="text-xs sm:text-xs pr-1 text-orange-500 font-medium">
+          Powered by QAI STUDIO
+        </span>
+
+        {/* Improved Tooltip */}
+        <div
+          className={`
+            absolute 
+            z-10
+            w-64
+            bg-gray-700 
+            text-white 
+            text-xs 
+            rounded 
+            p-2
+            top-1 ml-52
+            left-1/2 
+            -translate-x-1/2
+            transition-all 
+            duration-300
+            ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible'}
+          `}
+        >
+          You can Ask Sherlock to mine and discover information from all our past proposals, client PPTs, and case studies.
         </div>
+      </div>
       </div>
 
       {/* Right Section - User Info */}
       <div className="flex items-center gap-3">
-        <span className="hidden sm:block text-sm md:text-base agbalumo-regular text-gray-700">
+        <span className="hidden sm:block text-sm md:text-base noto-serif-old-uyghur-regular text-gray-700">
           {userName}
         </span>
         <button 

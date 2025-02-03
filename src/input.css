@@ -4,9 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
-.agbalumo-regular {
+/* .agbalumo-regular {
     font-family: "Agbalumo", serif;
     font-weight: 400;
     font-style: normal;
   }
-  
+   */
+  .amarante-regular {
+    font-family: "Amarante", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .noto-serif-old-uyghur-regular {
+    font-family: "Noto Serif Old Uyghur", serif;
+    font-weight: 400;
+    font-style: normal;
+  }

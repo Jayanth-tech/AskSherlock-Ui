@@ -127,7 +127,8 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
           },
           query: inputMessage,
           created: getCurrentTimestamp(),
-          username: userName 
+          username: userName ,
+          emailId: userEmail 
         }),
       });
   
@@ -176,6 +177,7 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
         type: feedbackModal.type,
         comment: feedbackText,
       },
+      emailId: userEmail,
     };
 
     try {

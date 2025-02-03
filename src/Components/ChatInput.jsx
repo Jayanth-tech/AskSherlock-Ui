@@ -95,7 +95,7 @@ const ChatInput = ({ handleSubmit }) => {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder={isListening ? "Listening..." : "Message your AI assistant..."}
-            className="w-full p-3 md:p-4 pr-24 border border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 bg-gray-50 text-sm md:text-base resize-none overflow-hidden"
+            className="w-full p-3 md:p-4 pr-24 border border-gray-300 text-black rounded-xl md:rounded-2xl focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 bg-gray-50 text-sm md:text-base resize-none overflow-hidden"
             rows="1"
             style={{ minHeight: '48px', maxHeight: '200px' }}
           />
