@@ -26,10 +26,16 @@ const ChatHeader = ({ userName, userEmail, photo, onOpenSidebar, onLogout }) => 
         <div className="flex flex-col relative">
         <h1 
           className="text-lg md:text-xl noto-serif-old-uyghur-regular font-black text-purple-800 cursor-pointer"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+          >
+        
           Ask Sherlock
+        <span className='text-xs font-black text-gray-400 absolute'  
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+        ⓘ
+
+        </span>
+        
         </h1>
 
         <span className="text-xs sm:text-xs pr-1 text-orange-500 font-medium">
