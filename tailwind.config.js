@@ -9,6 +9,7 @@ export default {
     extend: {
       animation: {
         'minimal-bounce': 'minimal-bounce 2s ease-in-out infinite',
+        scroll: 'scrollText 10s linear infinite',
       },
       keyframes: {
         'minimal-bounce': {

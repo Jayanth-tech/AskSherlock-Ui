@@ -169,9 +169,9 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
   };
   
 
-  const handleFeedbackSubmit = async () => {
+  const handleFeedbackSubmit = async (inputMessage) => {
     const feedbackPayload = {
-      user: username,
+      user: inputMessage,
       ai: messages.find((msg) => msg.id === feedbackModal.messageId)?.content || "",
       feedback: {
         type: feedbackModal.type,
@@ -179,14 +179,23 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
       },
       emailId: userEmail,
     };
+    console.log("Feedback Payload:", feedbackPayload);
 
+  // You can check if `feedbackPayload` is serializable
+  // try {
+  //   JSON.stringify(feedbackPayload);
+  // } catch (error) {
+  //   console.error("Error serializing feedback payload:", error);
+  // }
+
+  
     try {
       await fetch('https://asksherlock.azurewebsites.net/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(feedbackPayload),
+        body:feedbackPayload,
       });
       console.log("Feedback submitted successfully.");
     } catch (error) {

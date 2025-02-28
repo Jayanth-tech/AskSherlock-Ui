@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, User, LogOut } from 'lucide-react';
 import Robot from "../assets/robot2.png";
+import Marquee from "react-fast-marquee";
 
 const ChatHeader = ({ userName, userEmail, photo, onOpenSidebar, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -10,7 +11,7 @@ const ChatHeader = ({ userName, userEmail, photo, onOpenSidebar, onLogout }) => 
   };
 
   return (
-    <div className="border-b border-gray-200 p-4 flex items-center justify-between relative">
+    <div className="border-b border-gray-200 p-4 flex items-center justify-between relative ">
       {/* Left Section */}
       <div className="flex items-center gap-3">
         <button
@@ -24,51 +25,55 @@ const ChatHeader = ({ userName, userEmail, photo, onOpenSidebar, onLogout }) => 
         <img src={Robot} alt="Bot" className="w-5 h-5 md:w-6 md:h-6 lg:w-10 lg:h-10 rounded-2xl sm:w-6 sm:h-6" />
 
         <div className="flex flex-col relative">
-        <h1 
-          className="text-lg md:text-xl noto-serif-old-uyghur-regular font-black text-purple-800 cursor-pointer"
+          <h1 
+            className="text-lg md:text-xl noto-serif-old-uyghur-regular font-black text-purple-800 cursor-pointer"
           >
-        
-          Ask Sherlock
-        <span className='text-xs font-black text-gray-400 absolute'  
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}>
-        ⓘ
+            Ask Sherlock
+            <span className='text-xs font-black text-gray-400 absolute'  
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}>
+              ⓘ
+            </span>
+          </h1>
 
-        </span>
-        
-        </h1>
+          <span className="text-xs sm:text-xs pr-1 text-orange-500 font-medium">
+            Powered by QAI STUDIO
+          </span>
 
-        <span className="text-xs sm:text-xs pr-1 text-orange-500 font-medium">
-          Powered by QAI STUDIO
-        </span>
-
-        {/* Improved Tooltip */}
-        <div
-          className={`
-            absolute 
-            z-10
-            w-64
-            bg-gray-700 
-            text-white 
-            text-xs 
-            rounded 
-            p-2
-            top-1 ml-52
-            left-1/2 
-            -translate-x-1/2
-            transition-all 
-            duration-300
-            ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible'}
-          `}
-        >
-          You can Ask Sherlock to mine and discover information from all our past proposals, client PPTs, and case studies.
+          {/* Improved Tooltip */}
+          <div
+            className={`
+              absolute 
+              z-10
+              w-64
+              bg-gray-700 
+              text-white 
+              text-xs 
+              rounded 
+              p-2
+              top-1 ml-52
+              left-1/2 
+              -translate-x-1/2
+              transition-all 
+              duration-300
+              ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible'}
+            `}
+          >
+            You can Ask Sherlock to mine and discover information from all our past proposals, client PPTs, and case studies.
+          </div>
         </div>
       </div>
+
+      {/* Marquee Section - Now a flex-grow element between left and right sections */}
+      <div className="flex-1 mx-4 px-4 text-gray-600 overflow-hidden">
+        <Marquee>
+          "AskSherlock" is designed to mine and discover content from past client presentations, RFP proposals, and case studies. It does not provide personal or company-sensitive data.
+        </Marquee>
       </div>
 
       {/* Right Section - User Info */}
-      <div className="flex items-center gap-3">
-        <span className="hidden sm:block text-sm md:text-base noto-serif-old-uyghur-regular text-gray-700">
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <span className="hidden w-full sm:block text-sm md:text-base noto-serif-old-uyghur-regular text-gray-700">
           {userName}
         </span>
         <button 
