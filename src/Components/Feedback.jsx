@@ -39,13 +39,18 @@ const Feedback = ({ isOpen, onClose, type, onSubmit }) => {
             className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >
             Cancel
-          </button>
-          <button
+          </button> 
+          {/* <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
+            >
             Submit
-          </button>
+          </button> */}
+          <button onClick={() => handleFeedbackSubmit(feedbackText)} 
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+  Submit
+</button>
+
         </div>
       </div>
     </div>

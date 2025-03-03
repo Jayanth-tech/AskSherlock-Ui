@@ -169,9 +169,14 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
   };
   
 
-  const handleFeedbackSubmit = async (inputMessage) => {
+  const handleFeedbackSubmit = async () => {
+    // Find the last user message to include in feedback
+    const lastUserMessage = messages
+      .filter(msg => msg.sender === "user")
+      .slice(-1)[0]?.content || "";
+      
     const feedbackPayload = {
-      user: inputMessage,
+      user: lastUserMessage,
       ai: messages.find((msg) => msg.id === feedbackModal.messageId)?.content || "",
       feedback: {
         type: feedbackModal.type,
@@ -180,23 +185,20 @@ const ChatInterface = ({ userName, userEmail, photo, onLogout }) => {
       emailId: userEmail,
     };
     console.log("Feedback Payload:", feedbackPayload);
-
-  // You can check if `feedbackPayload` is serializable
-  // try {
-  //   JSON.stringify(feedbackPayload);
-  // } catch (error) {
-  //   console.error("Error serializing feedback payload:", error);
-  // }
-
-  
+    
     try {
-      await fetch('https://asksherlock.azurewebsites.net/feedback', {
+      const response = await fetch('https://asksherlock.azurewebsites.net/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body:feedbackPayload,
+        body: JSON.stringify(feedbackPayload), // Convert object to JSON string
       });
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+      
       console.log("Feedback submitted successfully.");
     } catch (error) {
       console.error("Error submitting feedback:", error);
