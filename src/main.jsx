@@ -8,6 +8,8 @@ import { PublicClientApplication } from '@azure/msal-browser';
 import Undermaintanence from './Components/Undermaintanence.jsx';
 
 const msalInstance = new PublicClientApplication(msalConfig);
+console.log("Vite_Maintanence : ",import.meta.env.VITE_MAINTENANCE);
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
